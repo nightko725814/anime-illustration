@@ -2,10 +2,11 @@
 
 Everything below was rendered on the reference machine (RTX 3060 Laptop 6 GB) with the workflows shipped in this repo. All four use the same recipe unless noted: **Krea 2 Turbo Q4 GGUF, 10 steps er_sde / simple, CFG 1 (no negative prompt), 1920×1080 single pass.**
 
-![hero](final-frames/hero.jpg)
+![Nightko white rose](final-frames/nightko_white_rose.jpg)
 
 | Image | Subject | Recipe |
 |---|---|---|
+| ![Nightko white rose](final-frames/nightko_white_rose.jpg) | Original character "Nightko", white-rose scene; earrings and hair streak added by local fixes after picking | z3zz4 LoRA @ 0.95, seed 3120095504871 |
 | ![Nightko](final-frames/nightko_halloween.jpg) | Original character "Nightko" (user's own OC), trick-or-treat scene | z3zz4 LoRA @ 0.95, seed 1234 |
 | ![Teto](final-frames/teto_poster.jpg) | Kasane Teto, collage-poster look with readable text | z3zz4 LoRA @ 0.95, seed 3120095504871 |
 | ![Nira china](final-frames/nira_china_bubble.jpg) | Nira-chan (ZUTOMAYO), china-dress look + bubble gum added by local fix | z3zz4 LoRA @ 0.95, base seed 1234; bubble: masked inpaint denoise 0.98, seed 202 |

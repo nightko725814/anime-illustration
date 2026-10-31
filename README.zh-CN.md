@@ -6,7 +6,7 @@
 
 既可以作为**编码 agent 的 skill**（放进 Claude Code / Codex / 任何读 `SKILL.md` 的 agent），也可以当**独立命令行工具箱**手动驱动。
 
-![画廊](docs/final-frames/hero.jpg)
+![Nightko 手捧白蔷薇——用本管线渲染的原创角色](docs/final-frames/nightko_white_rose.jpg)
 
 ## 为什么做这个
 

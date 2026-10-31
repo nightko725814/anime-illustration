@@ -6,7 +6,7 @@ Anime character illustrations from a written brief or reference images — rende
 
 Packaged both as a **coding-agent skill** (drop it into Claude Code / Codex / any agent that reads `SKILL.md`) and as a **standalone CLI toolkit** you can drive by hand.
 
-![gallery](docs/final-frames/hero.jpg)
+![Nightko cradling a white rose — an original character rendered with this pipeline](docs/final-frames/nightko_white_rose.jpg)
 
 ## Why this exists
 
