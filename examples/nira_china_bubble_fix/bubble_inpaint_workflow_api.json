@@ -1,0 +1,156 @@
+{
+  "1": {
+    "class_type": "UnetLoaderGGUF",
+    "inputs": {
+      "unet_name": "krea2_turbo-Q4_K_M.gguf"
+    }
+  },
+  "2": {
+    "class_type": "CLIPLoader",
+    "inputs": {
+      "clip_name": "qwen3vl_4b_fp8_scaled.safetensors",
+      "type": "krea2",
+      "device": "default"
+    }
+  },
+  "3": {
+    "class_type": "VAELoader",
+    "inputs": {
+      "vae_name": "qwen_image_vae.safetensors"
+    }
+  },
+  "4": {
+    "class_type": "CLIPTextEncode",
+    "inputs": {
+      "text": "Anime collage poster illustration with painterly cel shading and clean dark line art. Close-up of a cool girl's face in three-quarter view with black hair, pink eyes and winged eyeliner: she is blowing a big, round, glossy bubble of bright pink bubble gum from her pursed lips, the bubble floating in front of her mouth and partly covering her chin, with a crisp white highlight, a soft pink glow and a thin darker pink outline. Purple and black background.",
+      "clip": [
+        "2",
+        0
+      ]
+    }
+  },
+  "5": {
+    "class_type": "ConditioningZeroOut",
+    "inputs": {
+      "conditioning": [
+        "4",
+        0
+      ]
+    }
+  },
+  "6": {
+    "class_type": "LoadImage",
+    "_meta": {
+      "title": "Picked image (file in ComfyUI/input)"
+    },
+    "inputs": {
+      "image": "nirachina4_s1234.png"
+    },
+    "is_changed": [
+      "35b1000708313cddbaced0f9c01c00fbed16f86b65ee15898d49d912b897d8ea"
+    ]
+  },
+  "7": {
+    "class_type": "KSampler",
+    "_meta": {
+      "title": "Redraw only the masked area; denoise < 1 keeps its colors and layout (override with --denoise)"
+    },
+    "inputs": {
+      "model": [
+        "10",
+        0
+      ],
+      "positive": [
+        "4",
+        0
+      ],
+      "negative": [
+        "5",
+        0
+      ],
+      "latent_image": [
+        "13",
+        0
+      ],
+      "seed": 202,
+      "steps": 10,
+      "cfg": 1.0,
+      "sampler_name": "er_sde",
+      "scheduler": "simple",
+      "denoise": 0.98
+    }
+  },
+  "8": {
+    "class_type": "VAEDecode",
+    "inputs": {
+      "samples": [
+        "7",
+        0
+      ],
+      "vae": [
+        "3",
+        0
+      ]
+    }
+  },
+  "9": {
+    "class_type": "SaveImage",
+    "inputs": {
+      "filename_prefix": "nirachina4bubble_s202_krea2_turbo_z3zz4_local_inpaint",
+      "images": [
+        "8",
+        0
+      ]
+    }
+  },
+  "10": {
+    "class_type": "LoraLoaderModelOnly",
+    "inputs": {
+      "model": [
+        "1",
+        0
+      ],
+      "lora_name": "z3zz4-k2-4_c1-st5000.safetensors",
+      "strength_model": 0.95
+    }
+  },
+  "11": {
+    "class_type": "VAEEncode",
+    "inputs": {
+      "pixels": [
+        "6",
+        0
+      ],
+      "vae": [
+        "3",
+        0
+      ]
+    }
+  },
+  "12": {
+    "class_type": "LoadImageMask",
+    "_meta": {
+      "title": "Repaint mask: white = area to redraw (file in ComfyUI/input; override with --mask)"
+    },
+    "inputs": {
+      "image": "nirachina4_bubble_mask.png",
+      "channel": "red"
+    },
+    "is_changed": [
+      "5d4dde4779fa5d18f3b38f381a0b6d4e90424267cf53be947fe435886f4baee0"
+    ]
+  },
+  "13": {
+    "class_type": "SetLatentNoiseMask",
+    "inputs": {
+      "samples": [
+        "11",
+        0
+      ],
+      "mask": [
+        "12",
+        0
+      ]
+    }
+  }
+}

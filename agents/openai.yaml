@@ -1,0 +1,3 @@
+interface:
+  display_name: "Anime Illustration"
+  short_description: "Anime character illustrations from references, rendered locally with Krea2"

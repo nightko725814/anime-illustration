@@ -1,0 +1,12 @@
+# Copy this file to your ComfyUI folder (next to main.py) as extra_model_paths.yaml,
+# then point base_path at your models root. This lets the models live anywhere —
+# including outside the ComfyUI installation — while ComfyUI still finds them.
+#
+# After editing, restart ComfyUI.
+
+anime_illustration:
+  base_path: D:\models            # CHANGE ME to your models root
+  diffusion_models: diffusion_models
+  text_encoders: text_encoders
+  vae: vae
+  loras: loras

@@ -1,0 +1,125 @@
+{
+  "1": {
+    "class_type": "UnetLoaderGGUF",
+    "_meta": {
+      "title": "Local base model (pack used redcraft22INT8INT4_2Krea2Edition)"
+    },
+    "inputs": {
+      "unet_name": "krea2_turbo-Q4_K_M.gguf"
+    }
+  },
+  "2": {
+    "class_type": "CLIPLoader",
+    "_meta": {
+      "title": "Pack used qwen3vl_4b_bf16; fp8 is the version its own note links"
+    },
+    "inputs": {
+      "clip_name": "qwen3vl_4b_fp8_scaled.safetensors",
+      "type": "krea2",
+      "device": "default"
+    }
+  },
+  "3": {
+    "class_type": "VAELoader",
+    "inputs": {
+      "vae_name": "qwen_image_vae.safetensors"
+    }
+  },
+  "4": {
+    "class_type": "CLIPTextEncode",
+    "inputs": {
+      "text": "PROMPT_PLACEHOLDER",
+      "clip": [
+        "2",
+        0
+      ]
+    }
+  },
+  "5": {
+    "class_type": "ConditioningZeroOut",
+    "inputs": {
+      "conditioning": [
+        "4",
+        0
+      ]
+    }
+  },
+  "6": {
+    "class_type": "EmptyLatentImage",
+    "_meta": {
+      "title": "Pack recipe: 1920x1080 in one pass"
+    },
+    "inputs": {
+      "width": 1920,
+      "height": 1080,
+      "batch_size": 1
+    }
+  },
+  "7": {
+    "class_type": "KSampler",
+    "_meta": {
+      "title": "Pack recipe: 10 steps er_sde simple CFG 1"
+    },
+    "inputs": {
+      "model": [
+        "10",
+        0
+      ],
+      "positive": [
+        "4",
+        0
+      ],
+      "negative": [
+        "5",
+        0
+      ],
+      "latent_image": [
+        "6",
+        0
+      ],
+      "seed": 0,
+      "steps": 10,
+      "cfg": 1.0,
+      "sampler_name": "er_sde",
+      "scheduler": "simple",
+      "denoise": 1.0
+    }
+  },
+  "8": {
+    "class_type": "VAEDecode",
+    "inputs": {
+      "samples": [
+        "7",
+        0
+      ],
+      "vae": [
+        "3",
+        0
+      ]
+    }
+  },
+  "9": {
+    "class_type": "SaveImage",
+    "inputs": {
+      "filename_prefix": "krea2_turbo_z3zz4",
+      "images": [
+        "8",
+        0
+      ]
+    }
+  },
+  "10": {
+    "class_type": "LoraLoaderModelOnly",
+    "_meta": {
+      "title": "z3zz4 0.95 (pack Turbo recipe: krea2_turbo_fp8 + z3zz4 0.95 + Detailer 1.0; Detailer not available)"
+    },
+    "inputs": {
+      "model": [
+        "1",
+        0
+      ],
+      "lora_name": "z3zz4-k2-4_c1-st5000.safetensors",
+      "strength_model": 0.95
+    }
+  }
+}

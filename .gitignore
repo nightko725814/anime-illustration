@@ -1,0 +1,22 @@
+# Agent handoff state (never published)
+.agent/
+
+__pycache__/
+*.pyc
+
+# Local working folders this skill creates in your project dir
+/render/
+/output/
+/compare/
+/prompts/
+/images/
+/presets/
+/work/
+/input/
+
+# Your own confirmed character profiles (copy characters.template.md to start one)
+references/characters.md
+
+# Partial downloads
+*.part
+*.part.*
