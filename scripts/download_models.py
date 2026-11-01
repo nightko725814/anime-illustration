@@ -48,8 +48,14 @@ def download(url: str, dst: Path) -> None:
 
 
 def main() -> int:
-    script_dir = Path(__file__).resolve().parent.parent
-    manifest = script_dir / "models" / "models.toml"
+    manifest = None
+    for parent in Path(__file__).resolve().parents:
+        candidate = parent / "models" / "models.toml"
+        if candidate.is_file():
+            manifest = candidate
+            break
+    if manifest is None:
+        raise SystemExit("models/models.toml not found in any parent directory")
 
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", required=True, help="Models root directory (files land in its subfolders)")

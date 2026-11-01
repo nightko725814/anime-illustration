@@ -4,7 +4,7 @@
 
 **The fix:** instead of re-rolling the whole picture, a masked inpaint redrew only the mouth region, and `composite_mask.py` pasted just that region back, leaving everything else pixel-identical.
 
-![before/after](../../docs/comparisons/bubble_fix.jpg)
+![before/after](../../../../docs/comparisons/bubble_fix.jpg)
 
 ## Files
 

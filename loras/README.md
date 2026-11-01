@@ -6,7 +6,7 @@ Civitai 上的 LoRA 许可普遍禁止二次分发，所以这个文件夹**只�
 python scripts/download_models.py --root <模型根目录> --check-only
 ```
 
-每个文件的 SHA-256 见 [models/models.toml](models/models.toml)。
+每个文件的 SHA-256 见 [../models/models.toml](../models/models.toml)。
 
 | 文件（放到 `loras/` 下） | 风格 / 训练目标 | 来源与训练集说明 | 实测强度 | 备注 |
 |---|---|---|---|---|
@@ -29,8 +29,8 @@ python scripts/run_workflow.py <工作流> --prompt-file prompt.txt --lora "BArt
 
 | 文件夹 | 内容 |
 |---|---|
-| [`models/`](models/) | 模型清单 models.toml（底模 / 文本编码器 / VAE / 分割模型的文件名、URL、SHA-256） |
-| [`assets/`](assets/) | 素材：提示词样例（`prompts/`）与 ComfyUI 工作流（`workflows/`） |
-| [`docs/final-frames/`](docs/final-frames/) | 最终单图（画廊成品，含配方标注） |
-| [`docs/comparisons/`](docs/comparisons/) | 对比图（修复前后等） |
-| [`examples/`](examples/) | 完整案例：素材 + 蒙版 + 对比 + 最终图逐文件拆解 |
+| [`models/`](../models/) | 模型清单 models.toml（底模 / 文本编码器 / VAE / 分割模型的文件名、URL、SHA-256） |
+| [`skills/*/assets/`](../skills/anime-illustration/assets/) | 素材：提示词样例（`prompts/`）与 ComfyUI 工作流（`workflows/`），在各 skill 内 |
+| [`docs/final-frames/`](../docs/final-frames/) | 最终单图（画廊成品，含配方标注） |
+| [`docs/comparisons/`](../docs/comparisons/) | 对比图（修复前后等） |
+| [`examples/`](../skills/anime-illustration/examples/) | 完整案例：素材 + 蒙版 + 对比 + 最终图逐文件拆解 |

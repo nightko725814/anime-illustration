@@ -9,8 +9,8 @@ Everything below was rendered on the reference machine (RTX 3060 Laptop 6 GB) wi
 | ![Nightko white rose](final-frames/nightko_white_rose.jpg) | Original character "Nightko", white-rose scene; earrings and hair streak added by local fixes after picking | z3zz4 LoRA @ 0.95, seed 3120095504871 |
 | ![Nightko](final-frames/nightko_halloween.jpg) | Original character "Nightko" (user's own OC), trick-or-treat scene | z3zz4 LoRA @ 0.95, seed 1234 |
 | ![Teto](final-frames/teto_poster.jpg) | Kasane Teto, collage-poster look with readable text | z3zz4 LoRA @ 0.95, seed 3120095504871 |
-| ![Nira china](final-frames/nira_china_bubble.jpg) | Nira-chan (ZUTOMAYO), china-dress look + bubble gum added by local fix | z3zz4 LoRA @ 0.95, base seed 1234; bubble: masked inpaint denoise 0.98, seed 202 |
-| ![Nira hoodie](final-frames/nira_hoodie.jpg) | Nira-chan, hoodie look, hand fixed locally after picking | z3zz4 LoRA @ 0.95, seed 20261030 |
+| ![Nira china](final-frames/nira_china_bubble.jpg) | Nira-chan (ZUTOMAYO), purple-black Chinese collage poster (anime-collage-poster skill) + bubble gum added by local fix | z3zz4 LoRA @ 0.95, base seed 1234; bubble: masked inpaint denoise 0.98, seed 202 |
+| ![Nira hoodie](final-frames/nira_hoodie.jpg) | Nira-chan, pastel hoodie collage poster (anime-collage-poster skill), hand fixed locally after picking | z3zz4 LoRA @ 0.95, seed 20261030 |
 
 ## The pick-and-fix loop in one picture
 
@@ -18,7 +18,7 @@ The bubble gum was in the brief but dropped by all three full renders. Instead o
 
 ![bubble fix](comparisons/bubble_fix.jpg)
 
-The full file-by-file worked example is [../../examples/nira_china_bubble_fix](../../examples/nira_china_bubble_fix/README.md).
+The full file-by-file worked example is [../skills/anime-illustration/examples/nira_china_bubble_fix](../skills/anime-illustration/examples/nira_china_bubble_fix/README.md).
 
 ## Fan-art note
 

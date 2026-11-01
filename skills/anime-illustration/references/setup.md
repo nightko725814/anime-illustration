@@ -2,7 +2,7 @@
 
 Hardware the pipeline was tested on: **RTX 3060 Laptop 6 GB VRAM, 16 GB RAM, Windows 11**. It works on that machine, so anything bigger works. Two rules of thumb learned the hard way:
 
-- **RAM is as important as VRAM.** ComfyUI offloads weights to RAM; once free RAM falls to ~2 GB, renders slow down dramatically or stall (see [../docs/troubleshooting.md](../docs/troubleshooting.md)). 16 GB is workable, 32 GB is comfortable.
+- **RAM is as important as VRAM.** ComfyUI offloads weights to RAM; once free RAM falls to ~2 GB, renders slow down dramatically or stall (see [../../../docs/troubleshooting.md](../../../docs/troubleshooting.md)). 16 GB is workable, 32 GB is comfortable.
 - Low VRAM is fine. The launch flags below (`--lowvram --cpu-vae`) trade some speed for a 6 GB-friendly footprint.
 
 ## 1. ComfyUI
@@ -49,9 +49,9 @@ python scripts/download_models.py --root D:/models          # downloads HF files
 python scripts/download_models.py --root D:/models --check-only   # verify only (run after manual Civitai downloads)
 ```
 
-Exact filenames, sizes, URLs and SHA-256 hashes live in [../models/models.toml](../models/models.toml).
+Exact filenames, sizes, URLs and SHA-256 hashes live in [../../../models/models.toml](../../../models/models.toml).
 
-- **Wire the models root into ComfyUI:** copy [../extra_model_paths.yaml.example](../extra_model_paths.yaml.example) to your ComfyUI folder as `extra_model_paths.yaml` and set `base_path`. Restart ComfyUI.
+- **Wire the models root into ComfyUI:** copy [../../../extra_model_paths.yaml.example](../../../extra_model_paths.yaml.example) to your ComfyUI folder as `extra_model_paths.yaml` and set `base_path`. Restart ComfyUI.
 - **Filenames must match the workflows.** The workflow JSONs load `krea2_turbo-Q4_K_M.gguf`, `qwen3vl_4b_fp8_scaled.safetensors`, `qwen_image_vae.safetensors` and `z3zz4-k2-4_c1-st5000.safetensors` by name. Keep those filenames, or edit the loader nodes (`UnetLoaderGGUF`, `CLIPLoader`, `VAELoader`, `LoraLoaderModelOnly`) to yours.
 - The base (alternative) RedCraft entry loads through plain `UNETLoader` instead of `UnetLoaderGGUF` and prints a harmless "unet unexpected … comfy_quant" warning.
 
@@ -83,5 +83,5 @@ Sampler defaults baked into all three: 1920×1080 single pass, 10 steps, er_sde 
 
 - **Speed:** about 4–5 minutes per 1920×1080 Turbo image and about 4 minutes per local inpaint on the reference machine. The first job after a model switch is slower.
 - **RAM is the bottleneck, not the GPU.** Between batches, unload with `POST /free {"unload_models": true, "free_memory": true}`. Avoid queueing many different jobs at once.
-- **Queue:** ComfyUI runs one job at a time. Stopping a background loop does not remove a job it already submitted — delete pending jobs with `POST /queue {"delete": [prompt_id]}`. Full recipes for stalls, paging and leftover processes: [../docs/troubleshooting.md](../docs/troubleshooting.md).
+- **Queue:** ComfyUI runs one job at a time. Stopping a background loop does not remove a job it already submitted — delete pending jobs with `POST /queue {"delete": [prompt_id]}`. Full recipes for stalls, paging and leftover processes: [../../../docs/troubleshooting.md](../../../docs/troubleshooting.md).
 - **Metadata:** every output PNG carries its API graph in the `prompt` text chunk. That is why `freeze_preset.py` and `--as-is` re-renders work, and how a reference image's real recipe can be recovered.

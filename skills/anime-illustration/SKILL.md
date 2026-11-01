@@ -76,7 +76,7 @@ The environment is described in [references/setup.md](references/setup.md): Comf
   3. Run `scripts/pixel_diff.py` and write the result into the preset README.
 
   For composites, recompose from the saved pieces and diff that instead.
-- **Stop stale work when the user changes direction mid-batch.** See [docs/troubleshooting.md](docs/troubleshooting.md) for stopping queued or running jobs safely.
+- **Stop stale work when the user changes direction mid-batch.** See [../../../docs/troubleshooting.md](../../docs/troubleshooting.md) for stopping queued or running jobs safely.
 
 ## 5. Fix one spot on a picked image
 

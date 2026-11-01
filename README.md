@@ -2,9 +2,12 @@
 
 [中文文档](README.zh-CN.md) · [License](LICENSE) · Python 3.11+ · ComfyUI 0.42+
 
-Anime character illustrations from a written brief or reference images — rendered **locally** with Krea 2 Turbo in ComfyUI, then refined with a **pick-and-fix loop**: render candidates → pick one → freeze it → change one spot at a time with masked inpainting while everything else stays pixel-identical.
+Two coding-agent skills for anime art, rendered **locally** with Krea 2 Turbo in ComfyUI and refined with a **pick-and-fix loop**: render candidates → pick one → freeze it → change one spot at a time while everything else stays pixel-identical.
 
-Packaged both as a **coding-agent skill** (drop it into Claude Code / Codex / any agent that reads `SKILL.md`) and as a **standalone CLI toolkit** you can drive by hand.
+- **`skills/anime-illustration`** — single-character illustrations from a written brief or reference images.
+- **`skills/anime-collage-poster`** — full collage posters with titles and typography, driven by ~2,000-word art-direction briefs.
+
+Each skill also works as a **standalone CLI toolkit** you can drive by hand.
 
 ![Nightko cradling a white rose — an original character rendered with this pipeline](docs/final-frames/nightko_white_rose.jpg)
 
@@ -12,7 +15,7 @@ Packaged both as a **coding-agent skill** (drop it into Claude Code / Codex / an
 
 Text-to-image gives you a lottery: re-prompt for one small change and the whole picture re-lays out. This repo encodes a working loop that treats renders as drafts:
 
-1. **Pin the character down from references** — not from the model's memory (see the [prompting guide](references/prompting-krea2.md#identity-block)).
+1. **Pin the character down from references** — not from the model's memory (see the [prompting guide](skills/anime-illustration/references/prompting-krea2.md#identity-block)).
 2. **Confirm the render config with a checklist** (workflow, base model, LoRA, style line, aspect ratio, resolution — all pre-ticked with defaults; say "defaults" or tick what to change).
 3. **Render 2–3 seeds**, review every image, send a labeled comparison grid.
 4. **Freeze the pick** into a re-renderable preset and verify bit-exact reproduction.
@@ -20,15 +23,31 @@ Text-to-image gives you a lottery: re-prompt for one small change and the whole 
 
 ## What's in the box
 
+**Shared:**
+
+| Part | What it does |
+|---|---|
+| Model manifest | exact filenames, sizes, sources and SHA-256 hashes for every model, plus a downloader that verifies them |
+| LoRA library doc | sources, tested strengths and hashes for each style LoRA (files not redistributed) |
+| Gallery + troubleshooting | renders with their recipes; the failure modes hit on the reference machine |
+
+**`skills/anime-illustration`:**
+
 | Part | What it does |
 |---|---|
 | 3 ComfyUI workflows (API format) | plain Turbo · Turbo + style LoRA · masked local inpaint |
-| 7 scripts | submit/render/queue, comparison grids, preset freezing, pixel-diff verification, mask compositing, SAM 2.1 masking, model download + SHA-256 verification |
 | Prompting guide | the Krea 2 rules that actually change outcomes (no artist names, no negative prompt, small-prop survival, hands, signatures, lighting) |
 | Local-fix playbook | a field-tested table of what worked and what didn't for one-spot repairs |
-| Worked example | [adding the missing bubble gum](examples/nira_china_bubble_fix/README.md), file by file |
-| LoRA library doc | sources, tested strengths and hashes for each style LoRA (files not redistributed) |
-| Model manifest | exact filenames, sizes, sources and SHA-256 hashes for every model |
+| Worked example | [adding the missing bubble gum](skills/anime-illustration/examples/nira_china_bubble_fix/README.md), file by file |
+
+**`skills/anime-collage-poster`:**
+
+| Part | What it does |
+|---|---|
+| 5 ComfyUI workflows | the poster recipe · plain · local inpaint · background-only repaint · reference-pack recipe |
+| 9 art-direction briefs | ~2,000-word, 18-paragraph templates for 6 proven themes, with a paragraph-by-paragraph adaptation guide |
+| Typography toolkit | layered real-font typesetting (torn-paper scraps, tape, hollow titles, glyph cleanup) + VHS glitch slicing |
+| Decision log | what was tried, what the feedback said, what stuck |
 
 ## Requirements
 
@@ -38,7 +57,7 @@ Text-to-image gives you a lottery: re-prompt for one small change and the whole 
 | RAM | 16 GB workable, 32 GB comfortable — **RAM, not VRAM, is the usual bottleneck** |
 | OS | Windows 11 (tested); Linux/macOS should work, scripts are plain Python |
 | ComfyUI | 0.42.0+ with the [ComfyUI-GGUF](https://github.com/city96/ComfyUI-GGUF) custom node |
-| Python | 3.11+ (the ComfyUI venv itself for `sam_mask.py`) |
+| Python | 3.11+ (the ComfyUI venv itself for `sam_mask.py`; a small extra venv for the cutout/typeset tools) |
 
 ## Install
 
@@ -61,7 +80,7 @@ python main.py --listen 127.0.0.1 --port 8188 --lowvram --cpu-vae --disable-auto
 
 ### 2 · Models
 
-Pick a models root (anywhere on disk), then:
+Pick a models root (anywhere on disk), then from this repo:
 
 ```bash
 python scripts/download_models.py --root D:/models
@@ -76,7 +95,7 @@ That downloads the Hugging Face-hosted files and verifies every SHA-256 against 
 | VAE | `vae/qwen_image_vae.safetensors` | 242 MB | [HF](https://huggingface.co/Comfy-Org/Krea-2) |
 | Style LoRA | `loras/z3zz4-k2-4_c1-st5000.safetensors` | 448 MB | [Civitai](https://civitai.com/models/2750764) (manual) |
 
-Optional models (faster base, more styles, SAM 2.1, anime cutout) are in the manifest and the [setup guide](references/setup.md).
+Optional models (faster base, more styles, SAM 2.1, anime cutout) are in the manifest and the [setup guide](skills/anime-illustration/references/setup.md).
 
 ### 3 · Wire the models root into ComfyUI
 
@@ -87,25 +106,26 @@ Copy [`extra_model_paths.yaml.example`](extra_model_paths.yaml.example) next to 
 ### 4 · Install as a skill (or use standalone)
 
 ```bash
-# Claude Code
-git clone https://github.com/<you>/anime-illustration ~/.claude/skills/anime-illustration
-
-# Cross-agent skills dir (Codex and friends)
-git clone https://github.com/<you>/anime-illustration ~/.agents/skills/anime-illustration
+git clone https://github.com/nightko725814/anime-illustration
+# Claude Code — install one or both skills:
+cp -r anime-illustration/skills/anime-illustration ~/.claude/skills/
+cp -r anime-illustration/skills/anime-collage-poster ~/.claude/skills/
+# Cross-agent skills dir (Codex and friends): same, into ~/.agents/skills/
 ```
 
-Or don't install anything — the `scripts/` folder is a plain CLI toolkit:
+Or don't install anything — every skill's `scripts/` folder is a plain CLI toolkit:
 
 ```bash
-python scripts/run_workflow.py --help
+python skills/anime-illustration/scripts/run_workflow.py --help
 ```
 
 ### 5 · Smoke test
 
 ```bash
-echo "a crimson-haired anime girl holding a baguette, crisp linework, soft painterly shading" > /tmp/first.txt
-python scripts/run_workflow.py assets/workflows/krea2_turbo_z3zz4_api.json \
-    --prompt-file /tmp/first.txt --seed 1234 --prefix smoke \
+echo "a crimson-haired anime girl holding a baguette, crisp linework, soft painterly shading" > first.txt
+python skills/anime-illustration/scripts/run_workflow.py \
+    skills/anime-illustration/assets/workflows/krea2_turbo_z3zz4_api.json \
+    --prompt-file first.txt --seed 1234 --prefix smoke \
     --output-dir <ComfyUI>/output
 ```
 
@@ -114,34 +134,37 @@ A real Turbo render takes minutes. If ComfyUI reports "model not found", see [tr
 ## Usage — the full loop
 
 ```bash
+S=skills/anime-illustration/scripts
+W=skills/anime-illustration/assets/workflows
+
 # 1. render 2–3 seeds (~4–5 min each on the reference 6 GB laptop)
 for s in 1234 20261030 3120095504871; do
-  python scripts/run_workflow.py assets/workflows/krea2_turbo_z3zz4_api.json \
+  python $S/run_workflow.py $W/krea2_turbo_z3zz4_api.json \
       --prompt-file my_prompt.txt --seed $s --prefix nira_s$s --output-dir <ComfyUI>/output
 done
 
 # 2. look at them side by side, then send the grid for review
-python scripts/compare.py compare/nira_grid.jpg \
+python $S/compare.py compare/nira_grid.jpg \
     "s1234=<ComfyUI>/output/nira_s1234_00001_.png" \
     "s20261030=<ComfyUI>/output/nira_s20261030_00001_.png" \
     --cols 2 --width 960
 
 # 3. the pick comes back ("this one") — freeze it into a re-renderable preset
-python scripts/freeze_preset.py <ComfyUI>/output/nira_s1234_00001_.png presets/nira_v1 --note "picked"
+python $S/freeze_preset.py <ComfyUI>/output/nira_s1234_00001_.png presets/nira_v1 --note "picked"
 
 # 4. prove the preset reproduces bit-exactly (unload models first so cache can't fake it)
 curl -X POST http://127.0.0.1:8188/free -d '{"unload_models": true, "free_memory": true}'
-python scripts/run_workflow.py presets/nira_v1/workflow_api.json --as-is --prefix verify
-python scripts/pixel_diff.py presets/nira_v1/best.png <ComfyUI>/output/verify_00001_.png
+python $S/run_workflow.py presets/nira_v1/workflow_api.json --as-is --prefix verify
+python $S/pixel_diff.py presets/nira_v1/best.png <ComfyUI>/output/verify_00001_.png
 
 # 5. one spot wrong? mask it, inpaint only that, paste it back
-python scripts/run_workflow.py assets/workflows/krea2_turbo_z3zz4_local_inpaint_api.json \
+python $S/run_workflow.py $W/krea2_turbo_z3zz4_local_inpaint_api.json \
     --prompt-file fix_bubble.txt --image presets/nira_v1/best.png --mask fix_mask.png \
     --denoise 0.98 --seed 202 --upload
-python scripts/composite_mask.py presets/nira_v1/best.png <output> fix_mask.png fixed.png
+python $S/composite_mask.py presets/nira_v1/best.png <output> fix_mask.png fixed.png
 ```
 
-A complete, file-by-file walkthrough of step 5: [examples/nira_china_bubble_fix](examples/nira_china_bubble_fix/README.md). Gallery with recipes: [docs/gallery.md](docs/gallery.md).
+A complete, file-by-file walkthrough of step 5: [skills/anime-illustration/examples/nira_china_bubble_fix](skills/anime-illustration/examples/nira_china_bubble_fix/README.md). Gallery with recipes: [docs/gallery.md](docs/gallery.md).
 
 ## The render-config checklist
 
@@ -161,9 +184,17 @@ When used as a skill, after you state the character setup the agent shows the re
 - [x] resolution:    1920×1080 single pass    [ ] 1280×720    [ ] 2560×1440
 ```
 
+## Posters: the collage skill
+
+For posters with titles, typography and mixed-media collage, the second skill swaps the one-paragraph prompt for a **~2,000-word, 18-paragraph art-direction brief** — layout axes, palette, surfaces, character echoes, cut-out masks, prop cluster, typography, tape, halftone, lighting, hierarchy. The paragraph-by-paragraph [brief template](skills/anime-collage-poster/references/brief-template.md) and six proven [theme packs](skills/anime-collage-poster/references/theme-packs.md) make new characters and themes an adaptation job instead of a gamble.
+
+![Teto collage poster with readable text](docs/final-frames/teto_poster.jpg)
+
+That Teto poster is one single Krea 2 pass — the collage structure comes from the brief, not from compositing. After picking, wrong words get fixed with real-font typesetting (`typeset_poster.py`: the 断夜中 → 真夜中 repair changed 3,246 px), and backgrounds can be repainted around a SAM-cut character. A field-tested [decision log](skills/anime-collage-poster/references/lessons.md) records what worked, and what the raw generated look beat (cleanup attempts, every time).
+
 ## Prompting rules that matter
 
-The full guide is [references/prompting-krea2.md](references/prompting-krea2.md); the three that surprise people most:
+The full guide is [skills/anime-illustration/references/prompting-krea2.md](skills/anime-illustration/references/prompting-krea2.md); the three that surprise people most:
 
 - **Artist names do nothing.** Style comes from a LoRA or concrete descriptors (line weight, shading, palette, grain).
 - **There is no negative prompt.** The graphs run at CFG 1 with a zeroed negative. Put exclusions in the main text.
@@ -171,7 +202,7 @@ The full guide is [references/prompting-krea2.md](references/prompting-krea2.md)
 
 ## Character profiles
 
-The skill keeps confirmed character designs in `references/characters.md` (gitignored — your OCs stay local). Start from [`references/characters.template.md`](references/characters.template.md). A filled example (Kasane Teto) is included.
+The skills keep confirmed character designs in `skills/anime-illustration/references/characters.md` (gitignored — your OCs stay local). Start from [`references/characters.template.md`](skills/anime-illustration/references/characters.template.md). A filled example (Kasane Teto) is included.
 
 ## Repository layout
 
@@ -179,19 +210,28 @@ Every artifact type lives in its own folder and is documented:
 
 ```
 anime-illustration/
-├── SKILL.md                  the agent-facing workflow (install this folder as a skill)
-├── agents/openai.yaml        interface metadata for OpenAI-style agent harnesses
-├── assets/                   assets — style example + fix prompts (prompts/) and the 3 workflows (workflows/)
-├── models/models.toml        models — manifest with filenames, URLs, SHA-256
-├── loras/README.md           LoRA library — sources, tested strengths, hashes (files not redistributed)
-├── references/               prompting guide · setup · local fixes · character template · scene-profile example
-├── scripts/                  run_workflow · compare · freeze_preset · pixel_diff · composite_mask · sam_mask · download_models
-├── examples/                 the bubble-gum fix, file by file (assets + mask + comparison + final)
-└── docs/
-    ├── final-frames/         final picked frames, each labeled with its recipe
-    ├── comparisons/          before/after comparison images
-    ├── gallery.md            gallery index
-    └── troubleshooting.md    failure modes and fixes
+├── skills/
+│   ├── anime-illustration/       skill 1: single-character illustrations
+│   │   ├── SKILL.md              the agent-facing workflow
+│   │   ├── references/           prompting guide · setup · local fixes · character template · scene profile
+│   │   ├── assets/               style example + fix prompts (prompts/) · 3 workflows (workflows/)
+│   │   ├── scripts/              render · compare · freeze · pixel-diff · composite · SAM mask
+│   │   └── examples/             the bubble-gum fix, file by file
+│   └── anime-collage-poster/     skill 2: collage posters with typography
+│       ├── SKILL.md              the agent-facing workflow
+│       ├── references/           brief template · theme packs · lessons · text-and-background fixes · setup
+│       ├── assets/               9 art-direction briefs (briefs/) · 5 workflows (workflows/)
+│       └── scripts/              + typeset_poster · glitch_slice · cutout_mask
+├── models/models.toml            models — manifest with filenames, URLs, SHA-256
+├── scripts/download_models.py    download + verify the manifest
+├── loras/README.md               LoRA library — sources, tested strengths, hashes
+├── docs/
+│   ├── final-frames/             final picked frames, each labeled with its recipe
+│   ├── comparisons/              before/after comparison images
+│   ├── gallery.md                gallery index
+│   └── troubleshooting.md        failure modes and fixes
+├── extra_model_paths.yaml.example
+└── README.md / README.zh-CN.md / LICENSE
 ```
 
 ## Troubleshooting
